@@ -1,10 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:option_help/firebase_options.dart';
 import 'package:option_help/view/screens/dasboard/home.dart';
 import 'package:option_help/view/screens/incidente/incidente.dart';
 import 'package:option_help/view/screens/login/login.dart';
 import 'package:option_help/view/screens/login/perfil/perfil.dart';
+import 'package:option_help/view/firebase_messaging_service.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await FirebaseMessagingService.initialize();
+
   runApp(const MyApp());
 }
 
@@ -21,16 +30,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
 
-      // 🔹 Pantalla inicial
       initialRoute: '/login',
 
-      // 🔹 Rutas disponibles
       routes: {
         '/login': (_) => const LoginScreen(),
         '/home': (_) => const HomeScreen(),
         '/perfil': (_) => const PerfilScreen(),
-
-        // 🔹 Nueva pantalla
         '/incidentes': (_) => const IncidentesPage(),
       },
     );

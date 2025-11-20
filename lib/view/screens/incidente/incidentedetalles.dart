@@ -155,14 +155,18 @@ class _IncidenteDetallePageState extends State<IncidenteDetallePage> {
       height: 50,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green.shade700,
+          backgroundColor: const Color.fromARGB(255, 13, 94, 201),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 4,
         ),
         icon: const Icon(Icons.save, size: 22),
-        label: const Text("Guardar Cambios", style: TextStyle(fontSize: 18)),
+        label: const Text(
+          "Guardar Cambios",
+          style: TextStyle(fontSize: 18),
+          selectionColor: Colors.black87,
+        ),
         onPressed: () async {
           try {
             await _updateIncidente(
