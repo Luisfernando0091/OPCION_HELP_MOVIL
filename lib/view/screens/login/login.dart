@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:option_help/view/services/auth_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,11 +17,46 @@ class _LoginScreenState extends State<LoginScreen> {
   final auth = AuthService();
   bool loading = false;
 
+  Future<void> sendTokenToServer(String fcmToken, String userToken) async {
+    final url = Uri.parse('http://10.0.2.2:8000/api/save-token');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $userToken',
+      },
+      body: jsonEncode({'token': fcmToken}),
+    );
+
+    if (response.statusCode == 200) {
+      print('✅ Token FCM guardado en backend');
+    } else {
+      print('❌ Error guardando token FCM: ${response.body}');
+    }
+  }
+
   Future<void> login() async {
     setState(() => loading = true);
 
     try {
-      await auth.login(emailCtrl.text, passCtrl.text);
+      // 1️⃣ Hacer login con AuthService
+      final loginResponse = await auth.login(emailCtrl.text, passCtrl.text);
+      final userToken = loginResponse['token']; // token de Laravel
+
+      // 2️⃣ Obtener token FCM real del dispositivo
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      print('TOKEN FCM: $fcmToken');
+
+      if (fcmToken != null) {
+        // 3️⃣ Enviar token al backend
+        await sendTokenToServer(fcmToken, userToken);
+      } else {
+        print('No se pudo obtener token FCM');
+      }
+
+      // 4️⃣ Navegar a home
       Navigator.pushReplacementNamed(context, "/home");
     } catch (e) {
       ScaffoldMessenger.of(
@@ -45,7 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
@@ -53,7 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  /// LOGO PERSONALIZADO
                   SizedBox(
                     height: 120,
                     child: Image.asset(
@@ -61,9 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       fit: BoxFit.contain,
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   const Text(
                     "Bienvenido",
                     style: TextStyle(
@@ -72,17 +106,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   const Text(
                     "Inicia sesión para continuar",
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
-
                   const SizedBox(height: 30),
-
-                  /// TARJETA DEL FORMULARIO
                   Container(
                     padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -96,7 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-
                     child: Column(
                       children: [
                         TextField(
@@ -106,9 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icon(Icons.email_outlined),
                           ),
                         ),
-
                         const SizedBox(height: 15),
-
                         TextField(
                           controller: passCtrl,
                           obscureText: true,
@@ -117,10 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icon(Icons.lock_outline),
                           ),
                         ),
-
                         const SizedBox(height: 25),
-
-                        /// BOTÓN LOGIN
                         SizedBox(
                           width: double.infinity,
                           height: 50,
