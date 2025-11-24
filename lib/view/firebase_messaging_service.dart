@@ -57,6 +57,7 @@ class FirebaseMessagingService {
               'Notificaciones Importantes',
               importance: Importance.max,
               priority: Priority.high,
+              icon: 'help',
             ),
           ),
         );
@@ -64,3 +65,4 @@ class FirebaseMessagingService {
     });
   }
 }
+  

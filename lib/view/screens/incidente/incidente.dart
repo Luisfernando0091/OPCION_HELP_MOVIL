@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:option_help/view/models/Incidente_model.dart';
 import 'package:option_help/view/screens/incidente/incidentedetalles.dart';
 import '../../services/incidente_service.dart';
+import '../../models/Incidente_model.dart';
+import '../../models/User_model.dart';
 
 class IncidentesPage extends StatefulWidget {
   const IncidentesPage({super.key});
@@ -96,7 +98,12 @@ class _IncidentesPageState extends State<IncidentesPage> {
                 return Card(
                   child: ListTile(
                     title: Text(item.titulo),
-                    subtitle: Text("Estado: ${item.estado}"),
+                    subtitle: Text(
+                      "Estado: ${item.estado}\n"
+                      "${item.usuario?.name ?? 'Sin usuario'} "
+                      "${item.usuario?.lastName ?? ''}",
+                    ),
+
                     trailing: Text(item.codigo),
 
                     onTap: () {

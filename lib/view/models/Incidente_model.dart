@@ -1,3 +1,5 @@
+import 'User_Model.dart';
+
 class IncidenteModel {
   final int id;
   final String codigo;
@@ -14,6 +16,10 @@ class IncidenteModel {
   final String createdAt;
   final String updatedAt;
 
+  //User
+  final UserModel? usuario;
+  final UserModel? tecnico;
+
   IncidenteModel({
     required this.id,
     required this.codigo,
@@ -29,6 +35,8 @@ class IncidenteModel {
     this.solucion,
     required this.createdAt,
     required this.updatedAt,
+    required this.usuario,
+    required this.tecnico,
   });
 
   factory IncidenteModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +55,8 @@ class IncidenteModel {
       solucion: json['solucion'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
+      usuario: UserModel.fromJson(json['usuario']),
+      tecnico: UserModel.fromJson(json['tecnico']),
     );
   }
 }

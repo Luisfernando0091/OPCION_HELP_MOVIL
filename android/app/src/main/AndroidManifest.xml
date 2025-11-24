@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- 🚨 PERMISOS NECESARIOS PARA NOTIFICACIONES FCM -->
+    <!-- 🚨PERMISOS NECESARIOS PARA NOTIFICACIONES FCM -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
@@ -8,8 +8,10 @@
         android:label="option_help"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
-        <activity
+<meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/a" />
+    <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
