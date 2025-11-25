@@ -42,9 +42,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -69,12 +67,10 @@ class _PerfilScreenState extends State<PerfilScreen> {
             Center(
               child: ElevatedButton(
                 onPressed: logout,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: const Text("Cerrar Sesión"),
               ),
-            )
+            ),
           ],
         ),
       ),

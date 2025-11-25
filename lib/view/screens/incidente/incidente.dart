@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:option_help/view/models/Incidente_model.dart';
 import 'package:option_help/view/screens/incidente/incidentedetalles.dart';
 import '../../services/incidente_service.dart';
-import '../../models/Incidente_model.dart';
-import '../../models/User_model.dart';
 
 class IncidentesPage extends StatefulWidget {
   const IncidentesPage({super.key});
@@ -17,13 +15,15 @@ class _IncidentesPageState extends State<IncidentesPage> {
 
   late Future<List<IncidenteModel>> futureIncidentes;
 
+  // ⬇⬇⬇ AHORA: por defecto la fecha es HOY
+  DateTime? filtroFecha = DateTime.now();
+
   @override
   void initState() {
     super.initState();
     futureIncidentes = incidenteService.getIncidentes();
   }
 
-  /// 🔄 Recargar lista manualmente (pull-to-refresh)
   Future<void> _reload() async {
     setState(() {
       futureIncidentes = incidenteService.getIncidentes();
@@ -33,95 +33,146 @@ class _IncidentesPageState extends State<IncidentesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Incidentes")),
       body: FutureBuilder<List<IncidenteModel>>(
         future: futureIncidentes,
         builder: (context, snapshot) {
-          // ⏳ Loading
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // ❌ Error
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 40),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Ocurrió un error al cargar los incidentes",
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 15),
-                  ElevatedButton.icon(
-                    onPressed: _reload,
-                    icon: const Icon(Icons.refresh),
-                    label: const Text("Reintentar"),
-                  ),
-                ],
-              ),
-            );
+            return Center(child: Text("Error al cargar incidentes"));
           }
 
           final incidentes = snapshot.data ?? [];
 
-          // 📭 Vacío
-          if (incidentes.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _reload,
-              child: ListView(
-                children: const [
-                  SizedBox(height: 100),
-                  Icon(Icons.inbox, size: 80, color: Colors.grey),
-                  SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      "No hay incidentes registrados",
-                      style: TextStyle(fontSize: 17, color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
+          // 🔽 FILTRAR POR FECHA (por defecto HOY)
+          final listaFiltrada = filtroFecha == null
+              ? incidentes
+              : incidentes.where((i) {
+                  if (i.createdAt == null) return false;
+                  final fecha = DateTime.parse(i.createdAt!);
+                  return fecha.year == filtroFecha!.year &&
+                      fecha.month == filtroFecha!.month &&
+                      fecha.day == filtroFecha!.day;
+                }).toList();
+
+          // ⚠ SI LA LISTA ESTÁ VACÍA, MOSTRAR CALENDARIO AUTOMÁTICAMENTE
+          if (listaFiltrada.isEmpty) {
+            return Column(
+              children: [
+                const SizedBox(height: 80),
+                const Icon(Icons.inbox, size: 80, color: Colors.grey),
+                const SizedBox(height: 10),
+                const Text(
+                  "No hay incidentes en esta fecha",
+                  style: TextStyle(fontSize: 17, color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
+
+                // ⬇⬇⬇ CALENDARIO DIRECTO
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.calendar_month),
+                  label: const Text("Elegir otra fecha"),
+                  onPressed: () async {
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: filtroFecha ?? DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2030),
+                    );
+
+                    if (picked != null) {
+                      setState(() {
+                        filtroFecha = picked;
+                      });
+                    }
+                  },
+                ),
+              ],
             );
           }
 
-          // 📋 Lista de incidentes
           return RefreshIndicator(
             onRefresh: _reload,
-            child: ListView.builder(
-              itemCount: incidentes.length,
-              itemBuilder: (context, index) {
-                final item = incidentes[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(item.titulo),
-                    subtitle: Text(
-                      "Estado: ${item.estado}\n"
-                      "${item.usuario?.name ?? 'Sin usuario'} "
-                      "${item.usuario?.lastName ?? ''}",
-                    ),
+            child: Column(
+              children: [
+                const SizedBox(height: 15),
 
-                    trailing: Text(item.codigo),
+                _filtroFechaWidget(),
 
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              IncidenteDetallePage(incidente: item),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: listaFiltrada.length,
+                    itemBuilder: (context, index) {
+                      final item = listaFiltrada[index];
+                      return Card(
+                        child: ListTile(
+                          title: Text(item.titulo),
+                          subtitle: Text(
+                            "Estado: ${item.estado}\n"
+                            "${item.usuario?.name ?? ''} ${item.usuario?.lastName ?? ''}",
+                          ),
+                          trailing: Text(item.codigo),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    IncidenteDetallePage(incidente: item),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
                   ),
-                );
-              },
+                ),
+              ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _filtroFechaWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton.icon(
+          icon: const Icon(Icons.calendar_today),
+          label: Text(
+            filtroFecha == null
+                ? "Filtrar por fecha"
+                : "${filtroFecha!.day}/${filtroFecha!.month}/${filtroFecha!.year}",
+          ),
+          onPressed: () async {
+            DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: filtroFecha ?? DateTime.now(),
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2030),
+            );
+
+            if (picked != null) {
+              setState(() {
+                filtroFecha = picked;
+              });
+            }
+          },
+        ),
+
+        if (filtroFecha != null)
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              setState(() {
+                filtroFecha = DateTime.now(); // volver a hoy
+              });
+            },
+          ),
+      ],
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:option_help/view/models/User_Model.dart';
+
 class RequerimeintoModel {
   final int id;
   final String codigo;
@@ -9,10 +11,13 @@ class RequerimeintoModel {
   final int tecnicoId;
   final int? categoriaId;
   final String fechaReporte;
-  final String fechaCierre;
+  final String? fechaCierre;
   final String? solucion;
   final String createdAt;
   final String updatedAt;
+
+  final UserModel? usuario;
+  final UserModel? tecnico;
 
   RequerimeintoModel({
     required this.id,
@@ -25,10 +30,12 @@ class RequerimeintoModel {
     required this.tecnicoId,
     this.categoriaId,
     required this.fechaReporte,
-    required this.fechaCierre,
+    this.fechaCierre,
     this.solucion,
     required this.createdAt,
     required this.updatedAt,
+    this.usuario,
+    this.tecnico,
   });
 
   factory RequerimeintoModel.fromJson(Map<String, dynamic> json) {
@@ -43,10 +50,18 @@ class RequerimeintoModel {
       tecnicoId: json['tecnico_id'],
       categoriaId: json['categoria_id'],
       fechaReporte: json['fecha_reporte'],
-      fechaCierre: json['fecha_cierre'] ?? "",
+      fechaCierre: json['fecha_cierre'],
       solucion: json['solucion'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
+
+      usuario: json['usuario'] != null
+          ? UserModel.fromJson(json['usuario'])
+          : null,
+
+      tecnico: json['tecnico'] != null
+          ? UserModel.fromJson(json['tecnico'])
+          : null,
     );
   }
 }

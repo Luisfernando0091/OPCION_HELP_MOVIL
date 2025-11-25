@@ -18,7 +18,7 @@ class UserModel {
     return UserModel(
       id: json['id'],
       name: json['name'],
-      lastName: json['LastName'],
+      lastName: json['LastName'] ?? "", // ⬅️ EN MAYÚSCULAS
       email: json['email'],
       // password: json['password'],
     );
