@@ -46,34 +46,79 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Mi Perfil")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Nombre:", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(user!.name, style: TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
+            // FOTO DE PERFIL
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.blueGrey.shade200,
+              child: const Icon(Icons.person, size: 60, color: Colors.white),
+            ),
+            const SizedBox(height: 20),
 
-            Text("Apellido:", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(user!.lastName, style: TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
+            // CARD CON INFORMACIÓN
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    profileItem("Nombre", user!.name),
+                    const Divider(),
+                    profileItem("Apellido", user!.lastName),
+                    const Divider(),
+                    profileItem("Correo", user!.email),
+                  ],
+                ),
+              ),
+            ),
 
-            Text("Correo:", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(user!.email, style: TextStyle(fontSize: 18)),
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
 
-            Center(
-              child: ElevatedButton(
+            // BOTÓN CERRAR SESIÓN
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
                 onPressed: logout,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text("Cerrar Sesión"),
+                icon: const Icon(Icons.logout),
+                label: const Text("Cerrar Sesión"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget profileItem(String title, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(fontSize: 18)),
+      ],
     );
   }
 }

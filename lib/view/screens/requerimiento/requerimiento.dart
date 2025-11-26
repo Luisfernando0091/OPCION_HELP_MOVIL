@@ -58,36 +58,38 @@ class _RequerimientosPageState extends State<RequerimientosPage> {
 
           // 🟡 Si está vacío → mostrar mensaje + calendario
           if (listaFiltrada.isEmpty) {
-            return Column(
-              children: [
-                const SizedBox(height: 80),
-                const Icon(Icons.inbox, size: 80, color: Colors.grey),
-                const SizedBox(height: 10),
-                const Text(
-                  "No hay requerimientos en esta fecha",
-                  style: TextStyle(fontSize: 17, color: Colors.grey),
-                ),
-                const SizedBox(height: 20),
+            return Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 80),
+                  const Icon(Icons.inbox, size: 80, color: Colors.grey),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "No hay requerimientos en esta fecha",
+                    style: TextStyle(fontSize: 17, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
 
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.calendar_month),
-                  label: const Text("Elegir otra fecha"),
-                  onPressed: () async {
-                    DateTime? picked = await showDatePicker(
-                      context: context,
-                      initialDate: filtroFecha ?? DateTime.now(),
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2030),
-                    );
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.calendar_month),
+                    label: const Text("Elegir otra fecha"),
+                    onPressed: () async {
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: filtroFecha ?? DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                      );
 
-                    if (picked != null) {
-                      setState(() {
-                        filtroFecha = picked;
-                      });
-                    }
-                  },
-                ),
-              ],
+                      if (picked != null) {
+                        setState(() {
+                          filtroFecha = picked;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
             );
           }
 

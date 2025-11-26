@@ -39,11 +39,18 @@ class _IncidenteDetallePageState extends State<IncidenteDetallePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, // 👈 AQUÍ CAMBIAS EL COLOR DE LA FLECHA
+        ),
         title: Text(
           "Incidente ${widget.incidente.codigo}",
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: const Color.fromARGB(255, 74, 130, 158),
+
+        backgroundColor: const Color.fromARGB(255, 8, 14, 92),
         elevation: 4,
       ),
       body: Padding(
@@ -155,17 +162,19 @@ class _IncidenteDetallePageState extends State<IncidenteDetallePage> {
       height: 50,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 13, 94, 201),
+          backgroundColor: const Color.fromARGB(255, 8, 14, 92),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 4,
         ),
-        icon: const Icon(Icons.save, size: 22),
+        icon: const Icon(Icons.save, size: 22, color: Colors.white),
         label: const Text(
           "Guardar Cambios",
-          style: TextStyle(fontSize: 18),
-          selectionColor: Colors.black87,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         onPressed: () async {
           try {

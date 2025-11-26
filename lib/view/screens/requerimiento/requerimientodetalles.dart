@@ -39,11 +39,17 @@ class _RequerimientoDetallePageState extends State<RequerimientoDetallePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white, // 👈 AQUÍ CAMBIAS EL COLOR DE LA FLECHA
+        ),
         title: Text(
           "Requerimiento ${widget.requerimiento.codigo}",
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: const Color.fromARGB(255, 74, 130, 158),
+        backgroundColor: const Color.fromARGB(255, 8, 14, 92),
         elevation: 4,
       ),
       body: Padding(
@@ -153,16 +159,19 @@ class _RequerimientoDetallePageState extends State<RequerimientoDetallePage> {
       height: 50,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 13, 94, 201),
+          backgroundColor: const Color.fromARGB(255, 8, 14, 92),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
           elevation: 4,
         ),
-        icon: const Icon(Icons.save, size: 22),
+        icon: const Icon(Icons.save, size: 22, color: Colors.white),
         label: const Text(
           "Guardar Cambios",
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         onPressed: () async {
           try {
@@ -182,9 +191,9 @@ class _RequerimientoDetallePageState extends State<RequerimientoDetallePage> {
 
             Navigator.pop(context, true);
           } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Error al actualizar: $e")),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("Error al actualizar: $e")));
           }
         },
       ),
@@ -201,8 +210,9 @@ class _RequerimientoDetallePageState extends State<RequerimientoDetallePage> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("api_token");
 
-    final url =
-        Uri.parse("http://10.0.2.2:8000/api/requerimientos/$id/solucion");
+    final url = Uri.parse(
+      "http://10.0.2.2:8000/api/requerimientos/$id/solucion",
+    );
 
     final body = {"estado": estado, "solucion": solucion};
 
