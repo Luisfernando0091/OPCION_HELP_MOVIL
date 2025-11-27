@@ -121,7 +121,7 @@ class _RequerimientoDetallePageState extends State<RequerimientoDetallePage> {
             labelText: "Seleccionar Estado",
             border: OutlineInputBorder(),
           ),
-          value: estadoSeleccionado,
+          initialValue: estadoSeleccionado,
           items: estados
               .map((e) => DropdownMenuItem(value: e, child: Text(e)))
               .toList(),
@@ -168,7 +168,7 @@ class _RequerimientoDetallePageState extends State<RequerimientoDetallePage> {
         icon: const Icon(Icons.save, size: 22, color: Colors.white),
         label: const Text(
           "Guardar Cambios",
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),

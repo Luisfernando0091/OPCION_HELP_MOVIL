@@ -50,8 +50,7 @@ class _IncidentesPageState extends State<IncidentesPage> {
           final listaFiltrada = filtroFecha == null
               ? incidentes
               : incidentes.where((i) {
-                  if (i.createdAt == null) return false;
-                  final fecha = DateTime.parse(i.createdAt!);
+                  final fecha = DateTime.parse(i.createdAt);
                   return fecha.year == filtroFecha!.year &&
                       fecha.month == filtroFecha!.month &&
                       fecha.day == filtroFecha!.day;

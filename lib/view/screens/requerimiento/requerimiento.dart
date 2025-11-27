@@ -49,8 +49,7 @@ class _RequerimientosPageState extends State<RequerimientosPage> {
           final listaFiltrada = filtroFecha == null
               ? requerimientos
               : requerimientos.where((r) {
-                  if (r.createdAt == null) return false;
-                  final fecha = DateTime.parse(r.createdAt!);
+                  final fecha = DateTime.parse(r.createdAt);
                   return fecha.year == filtroFecha!.year &&
                       fecha.month == filtroFecha!.month &&
                       fecha.day == filtroFecha!.day;
